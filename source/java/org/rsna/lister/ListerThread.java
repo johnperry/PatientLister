@@ -55,8 +55,6 @@ public class ListerThread extends Thread {
 				break;
 			}
 		}
-		System.out.println("serverROOTCSVFile = "+serverROOTCSVFile);		
-		System.out.println("copyToServerROOT = "+copyToServerROOT);		
 	}
 
 	public void run() {
