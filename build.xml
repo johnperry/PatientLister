@@ -5,6 +5,8 @@
 	<property name="java" value="${source}/java"/>
 	<property name="products" value="${basedir}/products"/>
 	<property name="ctp" value="/Development/CTP"/>
+	<property name="installer" value="org/rsna/installer"/>
+	<property name="lister" value="org/rsna/lister"/>
 
 	<path id="classpath">
 		<pathelement location="${products}/util.jar"/>
@@ -49,12 +51,30 @@
 				<attribute name="Main-Class" value="org.rsna.lister.PatientLister"/>
 				<attribute name="Implementation-Version" value="${today} @ ${now}"/>
 	            <attribute name="Java-Version" value="${ant.java.version}"/>
-            	<attribute name="Description" value="MIRCdocument patient list utility"/>
 				<attribute name="Class-Path" value="util.jar"/>
 			</manifest>
 			<fileset dir="${build}" includes="**"/>
 		</jar>
 
-	</target>
+		<mkdir dir="${build}/PatientLister"/>
 
+		<copy overwrite="true" todir="${build}/PatientLister">
+			<fileset dir="${products}" includes="PatientLister.jar util.jar"/>
+		</copy>
+
+		<jar destfile="${products}/PatientLister-installer.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.rsna.lister.Installer"/>
+				<attribute name="Implementation-Version" value="${today} @ ${now}"/>
+				<attribute name="Date" value="${today} at ${now}"/>
+            	<attribute name="Description" value="MIRCdocument patient list utility"/>
+			</manifest>
+			<fileset dir="${build}"
+				includes="${lister}/Installer** ${installer}/** PatientLister/**"/>
+		</jar>
+
+		<delete file="${products}/DAT.jar"/>
+
+	</target>
+	
 </project>
