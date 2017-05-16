@@ -23,6 +23,7 @@ public class PatientLister extends JFrame implements ActionListener {
     JLabel currentDoc;
     JPanel footer;
     JCheckBox includeDiagnosis;
+    JCheckBox copyToServerROOT;
 
     public static void main(String args[]) {
         new PatientLister();
@@ -45,9 +46,12 @@ public class PatientLister extends JFrame implements ActionListener {
 		footer = new JPanel();
 		footer.setLayout(new BoxLayout(footer, BoxLayout.X_AXIS));
 		includeDiagnosis = new JCheckBox("Include Diagnosis");
+		copyToServerROOT = new JCheckBox("Copy to Server ROOT");
 		JButton start = new JButton("Start");
 		start.addActionListener(this);
 		footer.add(includeDiagnosis);
+		footer.add(Box.createHorizontalStrut(20));
+		footer.add(copyToServerROOT);
 		footer.add(Box.createHorizontalGlue());
 		footer.add(start);
 		panel.add(footer,BorderLayout.SOUTH);
@@ -95,7 +99,11 @@ public class PatientLister extends JFrame implements ActionListener {
 		if ((dir != null) && dir.exists() && dir.isDirectory()) {
 			//Launch the thread
 			ListerThread listerThread =
-				new ListerThread(new File(dir, "storage"), textPane, currentDoc, includeDiagnosis.isSelected());
+				new ListerThread(new File(dir, "storage"), 
+								textPane, 
+								currentDoc, 
+								includeDiagnosis.isSelected(),
+								copyToServerROOT.isSelected());
 			listerThread.start();
 		}
 	}

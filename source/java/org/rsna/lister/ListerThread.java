@@ -22,22 +22,41 @@ import org.rsna.util.*;
 public class ListerThread extends Thread {
 
 	File baseDir;
+	File serverROOT = null;
 	int baseDirPathLength = 0;
 	File csvFile;
+	File serverROOTCSVFile;
 	StringBuffer csv;
 	ColorPane textPane;
 	JLabel currentDoc;
 	int docCount;
 	boolean includeDiagnosis;
+	boolean copyToServerROOT;
 
-    public ListerThread(File baseDir, ColorPane textPane, JLabel currentDoc, boolean includeDiagnosis) {
-		this.baseDir = baseDir;
+    public ListerThread(File baseDir, 
+    					ColorPane textPane, 
+    					JLabel currentDoc, 
+    					boolean includeDiagnosis,
+    					boolean copyToServerROOT) {
+		this.baseDir = baseDir.getAbsoluteFile();;
 		this.baseDirPathLength = baseDir.getAbsolutePath().length();
 		this.textPane = textPane;
 		this.currentDoc = currentDoc;
 		this.includeDiagnosis = includeDiagnosis;
+		this.copyToServerROOT = copyToServerROOT;
 		csvFile = new File("PatientList.csv");
 		csv = new StringBuffer();
+		
+		serverROOTCSVFile = baseDir.getParentFile();
+		while (serverROOTCSVFile != null) {
+			if (serverROOTCSVFile.getName().equals("mircsite")) {
+				serverROOTCSVFile = new File(serverROOTCSVFile.getParentFile(), "ROOT");
+				serverROOTCSVFile = new File(serverROOTCSVFile, "PatientList.csv");
+				break;
+			}
+		}
+		System.out.println("serverROOTCSVFile = "+serverROOTCSVFile);		
+		System.out.println("copyToServerROOT = "+copyToServerROOT);		
 	}
 
 	public void run() {
@@ -53,8 +72,11 @@ public class ListerThread extends Thread {
 						+" processed.\n");
 			}
 		}
-		textPane.println(Color.blue, "\nDone.\n\n");
 		FileUtil.setText(csvFile, csv.toString());
+		if (copyToServerROOT && (serverROOTCSVFile != null)) {
+			FileUtil.setText(serverROOTCSVFile, csv.toString());
+		}
+		textPane.println(Color.blue, "\nDone.\n\n");
 	}
 
 	//Walk a directory tree, looking for MIRCdocuments
